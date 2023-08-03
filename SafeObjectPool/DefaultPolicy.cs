@@ -21,6 +21,11 @@ namespace SafeObjectPool
         public Func<T> CreateObject;
         public Action<Object<T>> OnGetObject;
 
+
+        /// <summary>
+        /// Creates the object using the constructor func provided
+        /// </summary>
+        /// <returns></returns>
         public T OnCreate()
         {
             return CreateObject();

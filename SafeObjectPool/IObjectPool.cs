@@ -8,56 +8,66 @@ namespace SafeObjectPool
     public interface IObjectPool<T> : IDisposable
     {
         IPolicy<T> Policy { get; }
+
         /// <summary>
-        /// 是否可用
+        /// Is it available?
         /// </summary>
         bool IsAvailable { get; }
+
         /// <summary>
-        /// 不可用错误
+        /// Unavailable Exception
         /// </summary>
         Exception UnavailableException { get; }
+
         /// <summary>
-        /// 不可用时间
+        /// Unavailable Time
         /// </summary>
         DateTime? UnavailableTime { get; }
 
         /// <summary>
-        /// 将对象池设置为不可用，后续 Get/GetAsync 均会报错，同时启动后台定时检查服务恢复可用
+        /// Set the object pool as unavailable, subsequent Get/GetAsync will report an error, 
+        /// and start the background timing check service to restore availability
         /// </summary>
         /// <param name="exception"></param>
-        /// <returns>由【可用】变成【不可用】时返回true，否则返回false</returns>
+        /// <returns>Return true when it changes from [Available] to [Unavailable]，otherwise returns false</returns>
         bool SetUnavailable(Exception exception);
 
         /// <summary>
-        /// 统计对象池中的对象
+        /// Stats on Objects in the object pool
         /// </summary>
         string Statistics { get; }
-        /// <summary>
-        /// 统计对象池中的对象（完整)
-        /// </summary>
-        string StatisticsFullily { get; }
 
         /// <summary>
-        /// 获取资源
+        /// Statistics on objects in the object pool (full)
         /// </summary>
-        /// <param name="timeout">超时</param>
+        string StatisticsFull { get; }
+
+        /// <summary>
+        /// Get an object from the pool
+        /// </summary>
+        /// <param name="timeout"></param>
         /// <returns></returns>
         Object<T> Get(TimeSpan? timeout = null);
+
+        /// <summary>
+        /// Number of objects in the pool
+        /// </summary>
+        int Count { get; }
 
 #if net40
 #else
         /// <summary>
-        /// 获取资源
+        /// Get an object from the pool asynchronously
         /// </summary>
         /// <returns></returns>
         Task<Object<T>> GetAsync();
 #endif
 
         /// <summary>
-        /// 使用完毕后，归还资源
+        /// Return object to the pool
         /// </summary>
-        /// <param name="obj">对象</param>
-        /// <param name="isReset">是否重新创建</param>
+        /// <param name="obj"></param>
+        /// <param name="isReset">whether to recreate or just put in the pool</param>
         void Return(Object<T> obj, bool isReset = false);
     }
 }

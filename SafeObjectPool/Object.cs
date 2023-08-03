@@ -69,7 +69,7 @@ namespace SafeObjectPool
         }
 
         /// <summary>
-        /// 重置 Value 值
+        /// Reset value - destroys and recreates the object
         /// </summary>
         public void ResetValue()
         {
@@ -85,6 +85,10 @@ namespace SafeObjectPool
         }
 
         internal bool _isReturned = false;
+        
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
             Pool?.Return(this);

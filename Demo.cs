@@ -31,7 +31,7 @@ class SafeObjectPoolDemo
                     pool.Return(item);
                 }
 
-                Console.WriteLine(pool.StatisticsFullily);
+                Console.WriteLine(pool.StatisticsFull);
 
 
             }).Start();

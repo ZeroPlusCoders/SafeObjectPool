@@ -11,9 +11,9 @@ namespace SafeObjectPool
 {
 
     /// <summary>
-    /// 对象池管理类
+    /// Object Pool Manager
     /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
+    /// <typeparam name="T">Object Type</typeparam>
     public partial class ObjectPool<T> : IObjectPool<T>
     {
         public IPolicy<T> Policy { get; protected set; }
@@ -64,7 +64,7 @@ namespace SafeObjectPool
         }
 
         /// <summary>
-        /// 后台定时检查可用性
+        /// Periodically check availability in the background
         /// </summary>
         /// <param name="interval"></param>
         private void CheckAvailable(int interval)
@@ -75,14 +75,17 @@ namespace SafeObjectPool
 
                 if (UnavailableException != null)
                 {
+                    /*
+                    // Probably should add a logger to this....
                     var bgcolor = Console.BackgroundColor;
                     var forecolor = Console.ForegroundColor;
                     Console.BackgroundColor = ConsoleColor.DarkYellow;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write($"【{Policy.Name}】恢复检查时间：{DateTime.Now.AddSeconds(interval)}");
+                    Console.Write($"【{Policy.Name}】Recovery Check Time：{DateTime.Now.AddSeconds(interval)}");
                     Console.BackgroundColor = bgcolor;
                     Console.ForegroundColor = forecolor;
                     Console.WriteLine();
+                    */
                 }
 
                 while (UnavailableException != null)
@@ -98,12 +101,12 @@ namespace SafeObjectPool
                     {
 
                         var conn = getFree(false);
-                        if (conn == null) throw new Exception($"CheckAvailable 无法获得资源，{this.Statistics}");
+                        if (conn == null) throw new Exception($"ObjectPool.CheckAvailable Unable to get resources，{this.Statistics}");
 
                         try
                         {
 
-                            if (Policy.OnCheckAvailable(conn) == false) throw new Exception("CheckAvailable 应抛出异常，代表仍然不可用。");
+                            if (Policy.OnCheckAvailable(conn) == false) throw new Exception("ObjectPool.CheckAvailable, Still unavailable。");
                             break;
 
                         }
@@ -116,14 +119,16 @@ namespace SafeObjectPool
                     }
                     catch (Exception ex)
                     {
+                        /*
                         var bgcolor = Console.BackgroundColor;
                         var forecolor = Console.ForegroundColor;
                         Console.BackgroundColor = ConsoleColor.DarkYellow;
                         Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write($"【{Policy.Name}】仍然不可用，下一次恢复检查时间：{DateTime.Now.AddSeconds(interval)}，错误：({ex.Message})");
+                        Console.Write($"【{Policy.Name}】still unavailable，Next recovery check time：{DateTime.Now.AddSeconds(interval)}，Exception：({ex.Message})");
                         Console.BackgroundColor = bgcolor;
                         Console.ForegroundColor = forecolor;
                         Console.WriteLine();
+                        */
                     }
                 }
 
@@ -160,14 +165,16 @@ namespace SafeObjectPool
 
                 Policy.OnAvailable();
 
+                /*
                 var bgcolor = Console.BackgroundColor;
                 var forecolor = Console.ForegroundColor;
                 Console.BackgroundColor = ConsoleColor.DarkGreen;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"【{Policy.Name}】已恢复工作");
+                Console.Write($"【{Policy.Name}】ObjectPool resuming");
                 Console.BackgroundColor = bgcolor;
                 Console.ForegroundColor = forecolor;
                 Console.WriteLine();
+                */
             }
         }
 
@@ -178,12 +185,12 @@ namespace SafeObjectPool
             {
 
                 var conn = getFree(false);
-                if (conn == null) throw new Exception($"LiveCheckAvailable 无法获得资源，{this.Statistics}");
+                if (conn == null) throw new Exception($"ObjectPool.LiveCheckAvailable unable to get resource，{this.Statistics}");
 
                 try
                 {
 
-                    if (Policy.OnCheckAvailable(conn) == false) throw new Exception("LiveCheckAvailable 应抛出异常，代表仍然不可用。");
+                    if (Policy.OnCheckAvailable(conn) == false) throw new Exception("ObjectPool.LiveCheckAvailable Still unavailable。");
 
                 }
                 finally
@@ -204,7 +211,7 @@ namespace SafeObjectPool
         }
 
         public string Statistics => $"Pool: {_freeObjects.Count}/{_allObjects.Count}, Get wait: {_getSyncQueue.Count}, GetAsync wait: {_getAsyncQueue.Count}";
-        public string StatisticsFullily
+        public string StatisticsFull
         {
             get
             {
@@ -222,19 +229,25 @@ namespace SafeObjectPool
             }
         }
 
+        public int Count
+        {
+            get { return _freeObjects.Count;  }
+        }
+
         /// <summary>
-        /// 创建对象池
+        /// Object pool constructor
         /// </summary>
-        /// <param name="poolsize">池大小</param>
-        /// <param name="createObject">池内对象的创建委托</param>
-        /// <param name="onGetObject">获取池内对象成功后，进行使用前操作</param>
+        /// <param name="poolsize">Max Pool size</param>
+        /// <param name="createObject">The creation delegate for the objects in the pool</param>
+        /// <param name="onGetObject">After successfully obtaining the objects in the pool, perform pre-use operations</param>
         public ObjectPool(int poolsize, Func<T> createObject, Action<Object<T>> onGetObject = null) : this(new DefaultPolicy<T> { PoolSize = poolsize, CreateObject = createObject, OnGetObject = onGetObject })
         {
         }
+
         /// <summary>
-        /// 创建对象池
+        /// Object pool constructor
         /// </summary>
-        /// <param name="policy">策略</param>
+        /// <param name="policy">custom policy</param>
         public ObjectPool(IPolicy<T> policy)
         {
             Policy = policy;
@@ -246,34 +259,36 @@ namespace SafeObjectPool
             };
             try
             {
+                /*
                 Console.CancelKeyPress += (s1, e1) =>
                 {
                     if (e1.Cancel) return;
                     if (Policy.IsAutoDisposeWithSystem)
                         running = false;
                 };
+                */
             }
             catch { }
         }
 
         /// <summary>
-        /// 获取可用资源，或创建资源
+        /// Get available object, or create the object and return it
         /// </summary>
         /// <returns></returns>
         private Object<T> getFree(bool checkAvailable)
         {
 
             if (running == false)
-                throw new ObjectDisposedException($"【{Policy.Name}】对象池已释放，无法访问。");
+                throw new ObjectDisposedException($"【{Policy.Name}】The object pool has been released and cannot be accessed。");
 
             if (checkAvailable && UnavailableException != null)
-                throw new Exception($"【{Policy.Name}】状态不可用，等待后台检查程序恢复方可使用。{UnavailableException?.Message}");
+                throw new Exception($"【{Policy.Name}】Status unavailable, waiting for background checker to resume before use。{UnavailableException?.Message}");
 
             if ((_freeObjects.TryPop(out var obj) == false || obj == null) && _allObjects.Count < Policy.PoolSize)
             {
 
                 lock (_allObjectsLock)
-                    if (_allObjects.Count < Policy.PoolSize)
+                    if (_allObjects.Count < Policy.PoolSize) // Add objects to pool if we haven't done it yet
                         _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
             }
 
@@ -329,7 +344,7 @@ namespace SafeObjectPool
                     Policy.OnGetTimeout();
 
                     if (Policy.IsThrowGetTimeoutException)
-                        throw new TimeoutException($"SafeObjectPool.Get 获取超时（{timeout.Value.TotalSeconds}秒）。");
+                        throw new TimeoutException($"SafeObjectPool.Get timed out（{timeout.Value.TotalSeconds}秒）。");
 
                     return null;
                 }
@@ -363,7 +378,7 @@ namespace SafeObjectPool
             {
 
                 if (Policy.AsyncGetCapacity > 0 && _getAsyncQueue.Count >= Policy.AsyncGetCapacity - 1)
-                    throw new OutOfMemoryException($"SafeObjectPool.GetAsync 无可用资源且队列过长，Policy.AsyncGetCapacity = {Policy.AsyncGetCapacity}。");
+                    throw new OutOfMemoryException($"SafeObjectPool.GetAsync No resources available and the queue is too long，Policy.AsyncGetCapacity = {Policy.AsyncGetCapacity}。");
 
                 var tcs = new TaskCompletionSource<Object<T>>();
 
@@ -474,12 +489,12 @@ namespace SafeObjectPool
                 }
             }
 
-            //无排队，直接归还
+            //No queuing, return directly
             if (isReturn == false)
             {
                 try
                 {
-                    Policy.OnReturn(obj);
+                    Policy.OnReturn(obj);  // Call the OnReturn callback
                 }
                 catch
                 {

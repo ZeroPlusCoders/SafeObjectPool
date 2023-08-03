@@ -9,95 +9,96 @@ namespace SafeObjectPool
     {
 
         /// <summary>
-        /// 名称
+        /// Name of the policy
         /// </summary>
         string Name { get; set; }
 
         /// <summary>
-        /// 池容量
+        /// Max Capacity
         /// </summary>
         int PoolSize { get; set; }
 
         /// <summary>
-        /// 默认获取超时设置
+        /// Default fetch timeout
         /// </summary>
         TimeSpan SyncGetTimeout { get; set; }
 
         /// <summary>
-        /// 空闲时间，获取时若超出，则重新创建
+        /// Idle time, if it is exceeded when getting a value, it will be recreated
         /// </summary>
         TimeSpan IdleTimeout { get; set; }
 
         /// <summary>
-        /// 异步获取排队队列大小，小于等于0不生效
+        /// This is the queue size for async retrieval requests, less than or equal to 0 means no async enabled
         /// </summary>
         int AsyncGetCapacity { get; set; }
 
         /// <summary>
-        /// 获取超时后，是否抛出异常
+        /// Whether to throw an exception after getting a timeout
         /// </summary>
         bool IsThrowGetTimeoutException { get; set; }
 
         /// <summary>
-        /// 监听 AppDomain.CurrentDomain.ProcessExit/Console.CancelKeyPress 事件自动释放
+        /// Whether to auto dispose when the parent app exits
         /// </summary>
         bool IsAutoDisposeWithSystem { get; set; }
 
         /// <summary>
-        /// 后台定时检查可用性间隔秒数
+        /// Interval in seconds for background task to check availability
         /// </summary>
         int CheckAvailableInterval { get; set; }
 
         /// <summary>
-        /// 对象池的对象被创建时
+        /// Called when an object is created for the pool
         /// </summary>
-        /// <returns>返回被创建的对象</returns>
+        /// <returns>The created object</returns>
         T OnCreate();
 
         /// <summary>
-        /// 销毁对象
+        /// Destructor
         /// </summary>
-        /// <param name="obj">资源对象</param>
+        /// <param name="obj"></param>
         void OnDestroy(T obj);
 
         /// <summary>
-        /// 从对象池获取对象超时的时候触发，通过该方法统计
+        /// Triggered when obtaining an object from the object pool times out
         /// </summary>
         void OnGetTimeout();
 
         /// <summary>
-        /// 从对象池获取对象成功的时候触发，通过该方法统计或初始化对象
+        /// Triggered when the object is successfully obtained from the object pool, the object is initialized by this method
         /// </summary>
-        /// <param name="obj">资源对象</param>
+        /// <param name="obj"></param>
         void OnGet(Object<T> obj);
 #if net40
 #else
         /// <summary>
-        /// 从对象池获取对象成功的时候触发，通过该方法统计或初始化对象
+        /// Triggered when the object is successfully obtained from the object pool, the object is initialized by this method
         /// </summary>
-        /// <param name="obj">资源对象</param>
+        /// <param name="obj"></param>
         Task OnGetAsync(Object<T> obj);
 #endif
 
         /// <summary>
-        /// 归还对象给对象池的时候触发
+        /// Triggered when the object is returned to the object pool
         /// </summary>
-        /// <param name="obj">资源对象</param>
+        /// <param name="obj"></param>
         void OnReturn(Object<T> obj);
 
         /// <summary>
-        /// 检查可用性
+        /// check availability
         /// </summary>
-        /// <param name="obj">资源对象</param>
+        /// <param name="obj"></param>
         /// <returns></returns>
         bool OnCheckAvailable(Object<T> obj);
 
         /// <summary>
-        /// 事件：可用时触发
+        /// Event: fires when available
         /// </summary>
         void OnAvailable();
+
         /// <summary>
-        /// 事件：不可用时触发
+        /// Event: fires when unavailable
         /// </summary>
         void OnUnavailable();
     }
