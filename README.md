@@ -1,6 +1,9 @@
-## 介绍
+## Introduction
 
-数据库操作通常是 new SqlConnection()、 Open()、 使用完后 Close()，其实 ado.net 驱动已经实现了连接池管理，不然每次创建、连接、释放相当浪费性能。假设网站的访问在某一时刻突然爆增100万次，new 100万个SqlConnection对象显然会炸掉服务，连接对象，每次创建，connect，disconnect，disponse，显然开销很大。目前看来，最适合做连接对象的池子，对象池里的连接对象，保持长链接，效率最大化。
+Database operations are usually new SqlConnection()、 Open()、 after use Close()，
+Actually ado.net，Otherwise, every creation, connection, and release is a waste of performance.
+Assume that the visits to the website suddenly increase by 1 million times at a certain moment，new 1 million SqlConnection object will obviously blow up the service，
+连接对象，每次创建，connect，disconnect，disponse，显然开销很大。目前看来，最适合做连接对象的池子，对象池里的连接对象，保持长链接，效率最大化。
 
 ado.net自带的链接池不完美，比如占满的时候再请求会报错。ObjectPool 解决池用尽后，再请求不报错，排队等待机制。
 

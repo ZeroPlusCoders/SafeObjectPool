@@ -21,45 +21,47 @@ namespace SafeObjectPool
         }
 
         /// <summary>
-        /// 所属对象池
+        /// Pool that owns this object
         /// </summary>
         public IObjectPool<T> Pool { get; internal set; }
 
         /// <summary>
-        /// 在对象池中的唯一标识
+        /// unique identifier in the object pool
         /// </summary>
         public int Id { get; internal set; }
+
         /// <summary>
-        /// 资源对象
+        /// The object we're pooling
         /// </summary>
         public T Value { get; internal set; }
 
         internal long _getTimes;
+
         /// <summary>
-        /// 被获取的总次数
+        /// Total number of fetches
         /// </summary>
         public long GetTimes => _getTimes;
 
-        /// 最后获取时的时间
+        /// Last time fetched
         public DateTime LastGetTime { get; internal set; }
 
         /// <summary>
-        /// 最后归还时的时间
+        /// Last time returned
         /// </summary>
         public DateTime LastReturnTime { get; internal set; }
 
         /// <summary>
-        /// 创建时间
+        /// Creation time
         /// </summary>
         public DateTime CreateTime { get; internal set; } = DateTime.Now;
 
         /// <summary>
-        /// 最后获取时的线程id
+        /// The thread ID when last fetched
         /// </summary>
         public int LastGetThreadId { get; internal set; }
 
         /// <summary>
-        /// 最后归还时的线程id
+        /// The thread ID when last returned
         /// </summary>
         public int LastReturnThreadId { get; internal set; }
 
