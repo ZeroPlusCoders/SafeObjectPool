@@ -5,12 +5,12 @@
     <AssemblyName>SafeObjectPool</AssemblyName>
     <PackageId>SafeObjectPool</PackageId>
     <RootNamespace>SafeObjectPool</RootNamespace>
-    <Version>2.3.2</Version>
+    <Version>2.3.3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/2881099/SafeObjectPool</PackageProjectUrl>
-    <Description>应用场景：连接池，资源池等等</Description>
+    <Description>Application scenarios: connection pool, resource pool, etc.</Description>
     <RepositoryUrl>https://github.com/2881099/SafeObjectPool</RepositoryUrl>
-    <PackageTags>Pool Pooling PoolSize ObjectPool 连接池</PackageTags>
+    <PackageTags>Pool Pooling PoolSize ObjectPool ConnectionPool</PackageTags>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>$(AssemblyName)</PackageId>

@@ -50,9 +50,19 @@
             <param name="timeout"></param>
             <returns></returns>
         </member>
-        <member name="P:SafeObjectPool.IObjectPool`1.Count">
+        <member name="P:SafeObjectPool.IObjectPool`1.AllCount">
             <summary>
             Number of objects in the pool
+            </summary>
+        </member>
+        <member name="P:SafeObjectPool.IObjectPool`1.FreeCount">
+            <summary>
+            Number of objects returned to the pool
+            </summary>
+        </member>
+        <member name="P:SafeObjectPool.IObjectPool`1.MaxCount">
+            <summary>
+            Maximum number of objects in the pool
             </summary>
         </member>
         <member name="M:SafeObjectPool.IObjectPool`1.GetAsync">
@@ -162,45 +172,45 @@
         </member>
         <member name="P:SafeObjectPool.Object`1.Pool">
             <summary>
-            所属对象池
+            Pool that owns this object
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.Id">
             <summary>
-            在对象池中的唯一标识
+            unique identifier in the object pool
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.Value">
             <summary>
-            资源对象
+            The object we're pooling
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.GetTimes">
             <summary>
-            被获取的总次数
+            Total number of fetches
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.LastGetTime">
-            最后获取时的时间
+            Last time fetched
         </member>
         <member name="P:SafeObjectPool.Object`1.LastReturnTime">
             <summary>
-            最后归还时的时间
+            Last time returned
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.CreateTime">
             <summary>
-            创建时间
+            Creation time
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.LastGetThreadId">
             <summary>
-            最后获取时的线程id
+            The thread ID when last fetched
             </summary>
         </member>
         <member name="P:SafeObjectPool.Object`1.LastReturnThreadId">
             <summary>
-            最后归还时的线程id
+            The thread ID when last returned
             </summary>
         </member>
         <member name="M:SafeObjectPool.Object`1.ResetValue">

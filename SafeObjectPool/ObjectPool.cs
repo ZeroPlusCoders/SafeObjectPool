@@ -229,9 +229,19 @@ namespace SafeObjectPool
             }
         }
 
-        public int Count
+        public int FreeCount
         {
             get { return _freeObjects.Count;  }
+        }
+
+        public int AllCount
+        {
+            get { return _allObjects.Count; }
+        }
+
+        public int MaxCount
+        {
+            get { return this.Policy.PoolSize; }
         }
 
         /// <summary>
@@ -288,7 +298,7 @@ namespace SafeObjectPool
             {
 
                 lock (_allObjectsLock)
-                    if (_allObjects.Count < Policy.PoolSize) // Add objects to pool if we haven't done it yet
+                    if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
                         _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
             }
 

@@ -52,7 +52,17 @@ namespace SafeObjectPool
         /// <summary>
         /// Number of objects in the pool
         /// </summary>
-        int Count { get; }
+        int AllCount { get; }
+
+        /// <summary>
+        /// Number of objects returned to the pool
+        /// </summary>
+        int FreeCount { get; }
+
+        /// <summary>
+        /// Maximum number of objects in the pool
+        /// </summary>
+        int MaxCount { get; }
 
 #if net40
 #else
