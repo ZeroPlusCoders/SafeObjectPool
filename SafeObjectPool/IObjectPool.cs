@@ -64,6 +64,11 @@ namespace SafeObjectPool
         /// </summary>
         int MaxCount { get; }
 
+        /// <summary>
+        /// Return the assigned name for this pool
+        /// </summary>
+        string Name { get; }
+
 #if net40
 #else
         /// <summary>

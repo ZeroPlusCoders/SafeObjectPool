@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using NLog;
 
 namespace SafeObjectPool
 {
@@ -16,10 +18,13 @@ namespace SafeObjectPool
     /// <typeparam name="T">Object Type</typeparam>
     public partial class ObjectPool<T> : IObjectPool<T>
     {
+        public Logger Logger = null;
+
         public IPolicy<T> Policy { get; protected set; }
 
         private List<Object<T>> _allObjects = new List<Object<T>>();
         private object _allObjectsLock = new object();
+        private string _name = "";
         private ConcurrentStack<Object<T>> _freeObjects = new ConcurrentStack<Object<T>>();
 
         private ConcurrentQueue<GetSyncQueueInfo> _getSyncQueue = new ConcurrentQueue<GetSyncQueueInfo>();
@@ -244,23 +249,34 @@ namespace SafeObjectPool
             get { return this.Policy.PoolSize; }
         }
 
+        public string Name
+        {
+            get { return _name; }
+        }
+
         /// <summary>
         /// Object pool constructor
         /// </summary>
         /// <param name="poolsize">Max Pool size</param>
         /// <param name="createObject">The creation delegate for the objects in the pool</param>
         /// <param name="onGetObject">After successfully obtaining the objects in the pool, perform pre-use operations</param>
-        public ObjectPool(int poolsize, Func<T> createObject, Action<Object<T>> onGetObject = null) : this(new DefaultPolicy<T> { PoolSize = poolsize, CreateObject = createObject, OnGetObject = onGetObject })
+        public ObjectPool(int poolsize, Func<T> createObject, Action<Object<T>> onGetObject = null, string name = "") : this(new DefaultPolicy<T> { PoolSize = poolsize, CreateObject = createObject, OnGetObject = onGetObject })
         {
+            Logger = LogManager.GetLogger("mdsfile");
+            _name = name;
+            Logger.Error("SafeObjectPool {0} Instantiated", _name);
         }
 
         /// <summary>
         /// Object pool constructor
         /// </summary>
         /// <param name="policy">custom policy</param>
-        public ObjectPool(IPolicy<T> policy)
+        public ObjectPool(IPolicy<T> policy, string name = "" )
         {
+            Logger = LogManager.GetLogger("mdsfile");
             Policy = policy;
+            _name = name;
+            Logger.Error("SafeObjectPool {0} Instantiated", _name);
 
             AppDomain.CurrentDomain.ProcessExit += (s1, e1) =>
             {
@@ -300,10 +316,22 @@ namespace SafeObjectPool
                 lock (_allObjectsLock)
                     if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
                         _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
+                //if ( obj != null )
+                //    Debug.Print("SafeObjectPool.getFree NEW ID: {0}", obj.Id);
+            }
+            else
+            {
+                if (obj != null)
+                {
+                    //Debug.Print("SafeObjectPool.getFree CACHE ID: {0}", obj.Id);
+                }
             }
 
             if (obj != null)
+            {
                 obj._isReturned = false;
+            }
+
 
             if (obj != null && obj.Value == null ||
                 obj != null && Policy.IdleTimeout > TimeSpan.Zero && DateTime.Now.Subtract(obj.LastReturnTime) > Policy.IdleTimeout)
@@ -329,7 +357,7 @@ namespace SafeObjectPool
 
             if (obj == null)
             {
-
+                //Logger.Debug("SafeObjectPool.Get {0} - waiting for object", Name);
                 var queueItem = new GetSyncQueueInfo();
 
                 _getSyncQueue.Enqueue(queueItem);
@@ -354,7 +382,7 @@ namespace SafeObjectPool
                     Policy.OnGetTimeout();
 
                     if (Policy.IsThrowGetTimeoutException)
-                        throw new TimeoutException($"SafeObjectPool.Get timed out（{timeout.Value.TotalSeconds}秒）。");
+                        throw new TimeoutException($"SafeObjectPool.Get timed out（{timeout.Value.TotalSeconds} Seconds）。");
 
                     return null;
                 }
@@ -373,6 +401,7 @@ namespace SafeObjectPool
             obj.LastGetThreadId = Thread.CurrentThread.ManagedThreadId;
             obj.LastGetTime = DateTime.Now;
             Interlocked.Increment(ref obj._getTimes);
+            //Logger.Debug("SafeObjectPool.Get {0} - got object ID: {1}", Name, obj.Id);
 
             return obj;
         }
@@ -515,6 +544,8 @@ namespace SafeObjectPool
                     obj.LastReturnThreadId = Thread.CurrentThread.ManagedThreadId;
                     obj.LastReturnTime = DateTime.Now;
                     obj._isReturned = true;
+                    //Debug.Print("SafeObjectPool.getFree RETURN ID: {0}", obj.Id);
+                    //Logger.Debug("SafeObjectPool.Return {0} - returned ID: {1}", Name, obj.Id);
 
                     _freeObjects.Push(obj);
                 }

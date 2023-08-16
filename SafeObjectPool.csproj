@@ -5,7 +5,7 @@
     <AssemblyName>SafeObjectPool</AssemblyName>
     <PackageId>SafeObjectPool</PackageId>
     <RootNamespace>SafeObjectPool</RootNamespace>
-    <Version>2.3.3</Version>
+    <Version>2.3.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/2881099/SafeObjectPool</PackageProjectUrl>
     <Description>Application scenarios: connection pool, resource pool, etc.</Description>
@@ -29,5 +29,9 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
     <DefineConstants>net40</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="5.2.3" />
+  </ItemGroup>
 
 </Project>

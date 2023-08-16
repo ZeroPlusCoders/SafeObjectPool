@@ -65,6 +65,11 @@
             Maximum number of objects in the pool
             </summary>
         </member>
+        <member name="P:SafeObjectPool.IObjectPool`1.Name">
+            <summary>
+            Return the assigned name for this pool
+            </summary>
+        </member>
         <member name="M:SafeObjectPool.IObjectPool`1.GetAsync">
             <summary>
             Get an object from the pool asynchronously
@@ -235,7 +240,7 @@
             </summary>
             <param name="interval"></param>
         </member>
-        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(System.Int32,System.Func{`0},System.Action{SafeObjectPool.Object{`0}})">
+        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(System.Int32,System.Func{`0},System.Action{SafeObjectPool.Object{`0}},System.String)">
             <summary>
             Object pool constructor
             </summary>
@@ -243,7 +248,7 @@
             <param name="createObject">The creation delegate for the objects in the pool</param>
             <param name="onGetObject">After successfully obtaining the objects in the pool, perform pre-use operations</param>
         </member>
-        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(SafeObjectPool.IPolicy{`0})">
+        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(SafeObjectPool.IPolicy{`0},System.String)">
             <summary>
             Object pool constructor
             </summary>
