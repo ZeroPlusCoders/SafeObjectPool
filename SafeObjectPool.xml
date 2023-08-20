@@ -240,19 +240,23 @@
             </summary>
             <param name="interval"></param>
         </member>
-        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(System.Int32,System.Func{`0},System.Action{SafeObjectPool.Object{`0}},System.String)">
+        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(System.Int32,System.Func{`0},System.Action{SafeObjectPool.Object{`0}},System.String,System.Int32)">
             <summary>
             Object pool constructor
             </summary>
             <param name="poolsize">Max Pool size</param>
             <param name="createObject">The creation delegate for the objects in the pool</param>
             <param name="onGetObject">After successfully obtaining the objects in the pool, perform pre-use operations</param>
+            <param name="name">The name for this pool (can be used in logging)</param>
+            <param name="preloadAmount">Number of items to pre-load</param>
         </member>
-        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(SafeObjectPool.IPolicy{`0},System.String)">
+        <member name="M:SafeObjectPool.ObjectPool`1.#ctor(SafeObjectPool.IPolicy{`0},System.String,System.Int32)">
             <summary>
             Object pool constructor
             </summary>
-            <param name="policy">custom policy</param>
+            <param name="policy">pass a policy object (derived from IPolicy) for this pool to use</param>
+            <param name="name">The name for this pool (can be used in logging)</param>
+            <param name="preloadAmount">Number of items to pre-load</param>
         </member>
         <member name="M:SafeObjectPool.ObjectPool`1.getFree(System.Boolean)">
             <summary>

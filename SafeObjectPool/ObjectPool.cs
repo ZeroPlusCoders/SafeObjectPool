@@ -254,29 +254,77 @@ namespace SafeObjectPool
             get { return _name; }
         }
 
+
         /// <summary>
         /// Object pool constructor
         /// </summary>
         /// <param name="poolsize">Max Pool size</param>
         /// <param name="createObject">The creation delegate for the objects in the pool</param>
         /// <param name="onGetObject">After successfully obtaining the objects in the pool, perform pre-use operations</param>
-        public ObjectPool(int poolsize, Func<T> createObject, Action<Object<T>> onGetObject = null, string name = "") : this(new DefaultPolicy<T> { PoolSize = poolsize, CreateObject = createObject, OnGetObject = onGetObject })
+        /// <param name="name">The name for this pool (can be used in logging)</param>
+        /// <param name="preloadAmount">Number of items to pre-load</param>
+        public ObjectPool(int poolsize, Func<T> createObject, Action<Object<T>> onGetObject = null, string name = "", int preloadAmount = 0) : this(new DefaultPolicy<T> { PoolSize = poolsize, CreateObject = createObject, OnGetObject = onGetObject })
         {
             Logger = LogManager.GetLogger("mdsfile");
             _name = name;
             Logger.Error("SafeObjectPool {0} Instantiated", _name);
+
+            for (int i = 0; i < preloadAmount; i++)
+            {
+                if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
+                {
+                    Object<T> obj;
+                    _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
+                    obj.LastReturnThreadId = Thread.CurrentThread.ManagedThreadId;
+                    obj.LastReturnTime = DateTime.Now;
+                    obj._isReturned = true;
+                    //Debug.Print("SafeObjectPool.getFree RETURN ID: {0}", obj.Id);
+                    //Logger.Debug("SafeObjectPool.Return {0} - returned ID: {1}", Name, obj.Id);
+
+                    _freeObjects.Push(obj);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
+
+
+
 
         /// <summary>
         /// Object pool constructor
         /// </summary>
-        /// <param name="policy">custom policy</param>
-        public ObjectPool(IPolicy<T> policy, string name = "" )
+        /// <param name="policy">pass a policy object (derived from IPolicy) for this pool to use</param>
+        /// <param name="name">The name for this pool (can be used in logging)</param>
+        /// <param name="preloadAmount">Number of items to pre-load</param>
+        public ObjectPool(IPolicy<T> policy, string name = "" , int preloadAmount = 0)
         {
             Logger = LogManager.GetLogger("mdsfile");
             Policy = policy;
             _name = name;
             Logger.Error("SafeObjectPool {0} Instantiated", _name);
+
+            for (int i = 0; i < preloadAmount; i++)
+            {
+                if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
+                {
+                    Object<T> obj;
+                    _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
+                    obj.LastReturnThreadId = Thread.CurrentThread.ManagedThreadId;
+                    obj.LastReturnTime = DateTime.Now;
+                    obj._isReturned = true;
+                    //Debug.Print("SafeObjectPool.getFree RETURN ID: {0}", obj.Id);
+                    //Logger.Debug("SafeObjectPool.Return {0} - returned ID: {1}", Name, obj.Id);
+
+                    _freeObjects.Push(obj);
+                }
+                else
+                {
+                    break;
+                }
+            }
 
             AppDomain.CurrentDomain.ProcessExit += (s1, e1) =>
             {
