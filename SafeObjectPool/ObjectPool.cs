@@ -271,7 +271,7 @@ namespace SafeObjectPool
 
             for (int i = 0; i < preloadAmount; i++)
             {
-                if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
+                if (Policy.PoolSize == 0 || _allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
                 {
                     Object<T> obj;
                     _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
@@ -308,7 +308,7 @@ namespace SafeObjectPool
 
             for (int i = 0; i < preloadAmount; i++)
             {
-                if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
+                if ( Policy.PoolSize == 0 || _allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
                 {
                     Object<T> obj;
                     _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
@@ -358,11 +358,11 @@ namespace SafeObjectPool
             if (checkAvailable && UnavailableException != null)
                 throw new Exception($"【{Policy.Name}】Status unavailable, waiting for background checker to resume before use。{UnavailableException?.Message}");
 
-            if ((_freeObjects.TryPop(out var obj) == false || obj == null) && _allObjects.Count < Policy.PoolSize)
+            if ((_freeObjects.TryPop(out var obj) == false || obj == null) && (Policy.PoolSize == 0 || _allObjects.Count < Policy.PoolSize) )
             {
 
                 lock (_allObjectsLock)
-                    if (_allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
+                    if (Policy.PoolSize == 0 || _allObjects.Count < Policy.PoolSize) // Add object to pool if we haven't done it yet (and we aren't past max size)
                         _allObjects.Add(obj = new Object<T> { Pool = this, Id = _allObjects.Count + 1 });
                 //if ( obj != null )
                 //    Debug.Print("SafeObjectPool.getFree NEW ID: {0}", obj.Id);
