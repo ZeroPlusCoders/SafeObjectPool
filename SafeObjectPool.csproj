@@ -7,7 +7,8 @@
     <RootNamespace>SafeObjectPool</RootNamespace>
     <Version>2.3.7</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/2881099/SafeObjectPool</PackageProjectUrl>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <PackageProjectUrl>https://github.com/ZeroPlusCoders/SafeObjectPool/</PackageProjectUrl>
     <Description>Application scenarios: connection pool, resource pool, etc.</Description>
     <RepositoryUrl>https://github.com/ZeroPlusCoders/SafeObjectPool/</RepositoryUrl>
     <PackageTags>Pool Pooling PoolSize ObjectPool ConnectionPool</PackageTags>
