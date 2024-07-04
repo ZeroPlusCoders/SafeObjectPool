@@ -122,7 +122,7 @@ namespace SafeObjectPool
                         }
 
                     }
-                    catch (Exception ex)
+                    catch /* (Exception ex) */
                     {
                         /*
                         var bgcolor = Console.BackgroundColor;
