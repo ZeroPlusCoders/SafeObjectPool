@@ -5,12 +5,12 @@
     <AssemblyName>SafeObjectPool</AssemblyName>
     <PackageId>SafeObjectPool</PackageId>
     <RootNamespace>SafeObjectPool</RootNamespace>
-    <Version>2.3.7</Version>
+    <Version>2.3.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <PackageProjectUrl>https://github.com/ZeroPlusCoders/SafeObjectPool/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/ZeroPlusCoders/SafeObjectPool</PackageProjectUrl>
     <Description>Application scenarios: connection pool, resource pool, etc.</Description>
-    <RepositoryUrl>https://github.com/ZeroPlusCoders/SafeObjectPool/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ZeroPlusCoders/SafeObjectPool</RepositoryUrl>
     <PackageTags>Pool Pooling PoolSize ObjectPool ConnectionPool</PackageTags>
     <RepositoryType></RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
